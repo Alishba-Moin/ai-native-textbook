@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Chapter Metadata",
+  "description": "Schema for Docusaurus MDX chapter frontmatter and additional metadata.",
+  "type": "object",
+  "required": ["id", "title", "week_number", "module_id", "original_language"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "title": { "type": "string", "description": "The title of the chapter." },
+    "slug": { "type": "string", "description": "URL-friendly slug for the chapter." },
+    "week_number": { "type": "integer", "description": "The week number this chapter belongs to." },
+    "module_id": { "type": "string", "format": "uuid", "description": "ID of the module this chapter belongs to." },
+    "original_language": { "type": "string", "description": "ISO 639-1 code for the original language (e.g., 'en')." },
+    "keywords": { "type": "array", "items": { "type": "string" } },
+    "reading_time_minutes": { "type": "integer" }
+  },
+  "additionalProperties": false
+}

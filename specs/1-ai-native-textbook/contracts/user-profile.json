@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "User Profile",
+  "description": "Schema for user-specific profile and survey data.",
+  "type": "object",
+  "required": ["user_id", "software_background", "hardware_background"],
+  "properties": {
+    "user_id": { "type": "string", "format": "uuid", "description": "Associated user ID." },
+    "name": { "type": "string" },
+    "software_background": {
+      "type": "string",
+      "enum": ["Beginner", "Intermediate Python", "Advanced JavaScript", "Experienced in ROS", "Other"],
+      "description": "User's self-declared software background."
+    },
+    "hardware_background": {
+      "type": "string",
+      "enum": ["Novice", "Familiar with Arduino", "Experienced in ROS", "Other"],
+      "description": "User's self-declared hardware background."
+    },
+    "learning_pace_preference": {
+      "type": "string",
+      "enum": ["Fast", "Moderate", "Slow"],
+      "default": "Moderate",
+      "description": "User's preferred learning pace."
+    },
+    "preferred_language": {
+      "type": "string",
+      "enum": ["en", "ur"],
+      "default": "en",
+      "description": "User's preferred content language."
+    },
+    "personalized_content_difficulty": {
+      "type": "string",
+      "enum": ["simpler", "standard", "harder"],
+      "default": "standard",
+      "description": "Difficulty level for personalized content."
+    }
+  },
+  "additionalProperties": false
+}
