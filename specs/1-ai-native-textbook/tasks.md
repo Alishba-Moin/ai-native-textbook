@@ -24,9 +24,10 @@
 **Story Goal**: The platform presents 13 weeks of content, with each chapter specification imported and rendered as an MDX page.
 **Independent Test**: A user can browse all 13 weeks of content, and each chapter loads correctly as an MDX page.
 
-- [ ] T012 [P] [US4] Configure Docusaurus to load MDX files from `docs/` and parse frontmatter in `docusaurus.config.js`
-- [ ] T013 [P] [US4] Refine content ingestion script `scripts/ingest_content.py` to convert existing chapter specs to MDX and store in `docs/`
-- [ ] T014 [US4] Implement Docusaurus sidebar navigation for 13 weeks of content in `src/sidebar.js` (or similar)
+- [x] T012 [P] [US4] Configure Docusaurus to load MDX files from `docs/` and parse frontmatter in `docusaurus.config.js`
+- [x] T013 [P] [US4] Refine content ingestion script `scripts/ingest_content.py` to convert existing chapter specs to MDX and store in `docs/`
+- [x] T013 [P] [US4] Refine content ingestion script `scripts/ingest_content.py` to convert existing chapter specs to MDX and store in `docs/`
+- [ ] T014 [US4] Implement Docusaurus sidebar navigation for 13 weeks of content in `src/sidebars.ts`
 - [ ] T015 [US4] Create a generic MDX component for chapter display, handling custom metadata `src/components/ChapterLayout.tsx`
 
 ## Phase 4: P1: Personalized Learning Experience (Auth & Profile) [US1]

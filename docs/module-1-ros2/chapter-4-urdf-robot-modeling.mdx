@@ -1,0 +1,302 @@
+---
+title: "Chapter 4: URDF Robot Modeling"
+description: "Learn to define robot structure using URDF with links, joints, visual geometry, and kinematic chains for simulation and control"
+keywords: ["URDF", "robot modeling", "links", "joints", "RViz2", "xacro", "kinematic chains", "humanoid robots"]
+sidebar_position: 4
+learning_objectives:
+  - "Create URDF files defining robot links, joints, and kinematic chains"
+  - "Apply visual and collision geometry for robot visualization and physics"
+  - "Design humanoid robot models with proper joint hierarchies and naming conventions"
+  - "Evaluate URDF models using check_urdf and visualize in RViz2"
+prerequisites: ["Chapter 3: Services, Actions, and Parameters", "Basic XML syntax", "3D coordinate systems"]
+estimated_time: 100
+content_type: "tutorial"
+difficulty: "intermediate"
+ros2_distribution: "humble"
+chapter_number: 4
+---
+
+# Chapter 4: URDF Robot Modeling
+
+Before you can simulate or control a robot, you need to **describe** it—its shape, mass, joints, sensors. In ROS 2, this is done with **URDF (Unified Robot Description Format)**, an XML-based language for defining robot structure.
+
+Think of URDF as the "blueprint" for your robot. Just as an architect uses CAD drawings to specify building dimensions, you'll use URDF to specify:
+- **Links** (rigid body parts: torso, arms, legs)
+- **Joints** (connections between links: shoulder, elbow, knee)
+- **Visual geometry** (how the robot looks in RViz2)
+- **Collision geometry** (simplified shapes for physics simulation)
+- **Inertial properties** (mass, center of mass, inertia tensors)
+
+By the end of this chapter, you'll build a URDF model of a simplified humanoid robot and visualize it in RViz2.
+
+## 4.1 What is URDF?
+
+<ConceptCallout type="definition" title="URDF: Unified Robot Description Format">
+
+**URDF** is an XML-based specification for robot models:
+- **Links**: Rigid bodies (base, limbs, sensors)
+- **Joints**: Connections between links (revolute, prismatic, fixed)
+- **Visual**: 3D meshes or primitive shapes for rendering
+- **Collision**: Simplified geometry for collision detection
+- **Inertial**: Mass distribution for physics simulation
+
+URDF files are used by:
+- **RViz2**: 3D visualization tool
+- **Gazebo**: Physics-based simulation
+- **MoveIt2**: Motion planning framework
+- **robot_state_publisher**: Publishes TF transforms based on joint states
+
+</ConceptCallout>
+
+### 4.1.1 URDF File Structure
+
+Every URDF file starts with the `<robot>` root element:
+
+**Key Rules**:
+- Every robot has a **root link** (typically `base_link`)
+- Links are connected by **joints** forming a **tree structure** (no loops)
+- Joint names must be unique
+- Each joint has exactly one parent and one child link
+
+## 4.2 Links: Rigid Body Parts
+
+A **link** represents a rigid body part of the robot. Each link can have:
+- **Visual**: How it looks (rendered in RViz2)
+- **Collision**: Simplified shape for collision detection
+- **Inertial**: Mass and inertia tensor for physics
+
+### 4.2.1 Visual Geometry
+
+Visual geometry defines how the link appears in visualization tools:
+
+**Visual Elements**:
+- **`<origin>`**: Position (xyz in meters) and orientation (rpy in radians, roll-pitch-yaw)
+- **`<geometry>`**: Shape definition
+  - `<box size="x y z"/>`: Rectangular box
+  - `<cylinder radius="r" length="l"/>`: Cylinder
+  - `<sphere radius="r"/>`: Sphere
+  - `<mesh filename="package://my_robot/meshes/torso.stl"/>`: 3D mesh file
+- **`<material>`**: Color (rgba: red, green, blue, alpha 0-1)
+
+
+Each link has its own **coordinate frame**:
+- **Origin** is at the link's reference point (often center of mass or joint attachment)
+- **X-axis**: Forward (red in RViz2)
+- **Y-axis**: Left (green in RViz2)
+- **Z-axis**: Up (blue in RViz2)
+
+Follow the **right-hand rule**: curl fingers from X to Y, thumb points to Z.
+
+
+### 4.2.2 Collision Geometry
+
+Collision geometry is used for physics simulation and path planning. Use **simpler shapes** than visual geometry for performance:
+
+**Best Practice**: Visual geometry can be detailed meshes, but collision geometry should use primitive shapes (box, cylinder, sphere) for computational efficiency.
+
+### 4.2.3 Inertial Properties
+
+Inertial properties define mass distribution for physics simulation:
+
+**Inertial Elements**:
+- **`<mass>`**: Mass in kilograms
+- **`<inertia>`**: 3x3 inertia tensor (kg·m²)
+  - Diagonal elements (ixx, iyy, izz): moments of inertia
+  - Off-diagonal (ixy, ixz, iyz): products of inertia (often 0 for symmetric objects)
+
+
+For stable physics simulation, the inertia tensor must be:
+- **Positive definite**: All eigenvalues > 0
+- **Physically realistic**: Approximate real-world mass distribution
+
+For simple shapes:
+- **Box** (w, h, d): `ixx = m(h²+d²)/12`, `iyy = m(w²+d²)/12`, `izz = m(w²+h²)/12`
+- **Cylinder** (r, h): `ixx = iyy = m(3r²+h²)/12`, `izz = mr²/2`
+- **Sphere** (r): `ixx = iyy = izz = 2mr²/5`
+
+Tools like MeshLab can compute inertia from 3D meshes.
+
+
+## 4.3 Joints: Connecting Links
+
+**Joints** define how links move relative to each other. ROS 2 supports six joint types:
+
+| Joint Type | Description | Example |
+|------------|-------------|---------|
+| **revolute** | Rotates around axis with limits | Elbow (0° to 150°) |
+| **continuous** | Rotates 360° without limits | Wheel axle |
+| **prismatic** | Slides along axis with limits | Linear actuator |
+| **fixed** | No movement (rigid attachment) | Sensor mount |
+| **planar** | Moves in 2D plane | Omni-directional base |
+| **floating** | 6-DOF free motion | Free-falling object |
+
+### 4.3.1 Revolute Joint Example
+
+**Joint Elements**:
+- **`<parent>`** and **`<child>`**: Links being connected
+- **`<origin>`**: Where child link attaches to parent (xyz position, rpy orientation)
+- **`<axis>`**: Rotation axis (unit vector in parent link frame)
+- **`<limit>`**: Motion constraints (angles in radians for revolute, meters for prismatic)
+- **`<dynamics>`**: Damping and friction for simulation
+
+## 4.4 Example: 2-DOF Robotic Arm
+
+Let's build a simple 2-DOF arm with a base, upper arm, and forearm:
+   
+
+**Kinematic Chain**: `base_link` → (shoulder_joint) → `upper_arm` → (elbow_joint) → `forearm`
+
+## 4.5 Humanoid Robot URDF
+
+Humanoid robots require more complex kinematic trees with multiple branches for head, arms, and legs.
+
+### 4.5.1 Humanoid Naming Conventions
+
+
+Follow REP-120 naming conventions for consistency:
+- **Base**: `base_link` (pelvis/hip center)
+- **Head**: `head_link`
+- **Torso**: `torso_link`, `chest_link`
+- **Arms**: `left_upper_arm`, `left_forearm`, `left_hand`
+- **Legs**: `left_thigh`, `left_shin`, `left_foot`
+- **Fingers**: `left_thumb_proximal`, `left_index_distal`
+
+**Prefix convention**: `left_` / `right_` for bilateral symmetry
+
+
+### 4.5.2 Simplified Humanoid URDF
+
+**Kinematic Tree Structure**:
+```
+base_link (pelvis)
+├── torso
+│   ├── head
+│   ├── left_upper_arm → left_forearm
+│   └── right_upper_arm → right_forearm (TODO)
+├── left_thigh → left_shin
+└── right_thigh → right_shin (TODO)
+```
+
+## 4.6 Validating and Visualizing URDF
+
+### 4.6.1 URDF Validation
+
+Use `check_urdf` to validate syntax and structure:
+
+
+Common errors:
+- **Not a tree**: Loops in kinematic chain (each link can only have one parent)
+- **Missing parent/child**: Joint references non-existent link
+- **Invalid inertia**: Non-positive-definite inertia tensor
+
+### 4.6.2 Visualizing in RViz2
+
+
+
+If your robot doesn't appear in RViz2:
+1. **Check Fixed Frame**: Set to "base_link" in Global Options
+2. **Add RobotModel display**: Click "Add" → "RobotModel"
+3. **Verify TF**: Add "TF" display to see coordinate frames
+4. **Check topic**: RobotModel should subscribe to `/robot_description`
+5. **Inspect logs**: Look for URDF parsing errors in terminal
+
+Common visual issues:
+- **Gray robot**: Material colors not rendering (check RViz2 settings)
+- **Twisted geometry**: Incorrect `<origin rpy>` values in visual elements
+- **Missing links**: Joint origin places child far from parent
+
+
+## 4.7 Xacro: Parameterized URDF
+
+For complex robots, writing raw URDF becomes tedious (copy-pasting left/right arms). **Xacro** (XML Macros) adds:
+- **Constants**: Define reusable values
+- **Macros**: Template functions for repeated structures
+- **Math**: Compute values (e.g., `${'${pi/2}'}`)
+
+
+## 4.8 Hands-On Exercise: Build a Humanoid Torso
+
+### Problem Statement
+
+Build a URDF model of a humanoid upper body with:
+- **Base link** (pelvis)
+- **Torso** (fixed to base)
+- **Head** (revolute neck joint, ±90° yaw rotation)
+- **Left arm**: upper arm + forearm (2 links, 2 revolute joints)
+- **Right arm**: upper arm + forearm (2 links, 2 revolute joints)
+
+### Requirements
+
+**Minimum Links**: 6 (base, torso, head, left_upper_arm, left_forearm, right_upper_arm, right_forearm)
+
+**Minimum Joints**: 5
+- hip_joint (fixed): base → torso
+- neck_joint (revolute, yaw): torso → head (±90°)
+- left_shoulder (revolute, pitch): torso → left_upper_arm (±180°)
+- left_elbow (revolute, pitch): left_upper_arm → left_forearm (0° to 160°)
+- (Mirror for right arm)
+
+**Geometry**:
+- Use primitive shapes (box, cylinder, sphere)
+- Torso: 0.25m × 0.2m × 0.5m box
+- Head: 0.1m radius sphere
+- Arms: 0.03m radius cylinders, 0.3m length
+
+**Materials**:
+- Assign colors (torso: blue, head: skin tone, arms: gray)
+
+### Testing
+
+```bash
+# Validate URDF
+check_urdf humanoid_upper_body.urdf
+
+# Visualize in RViz2
+ros2 launch urdf_tutorial display.launch.py model:=humanoid_upper_body.urdf
+
+# Verify:
+# 1. All 6 links visible
+# 2. Joint sliders control arm movement
+# 3. TF frames show proper hierarchy
+```
+
+### Deliverable
+
+1. URDF file: `humanoid_upper_body.urdf`
+2. Screenshot from RViz2 showing robot with arms in different positions
+3. Output from `check_urdf` showing successful validation
+
+## Key Takeaways
+
+<div className="key-takeaways">
+
+### ✓ Core Concepts Mastered
+
+- **URDF is an XML-based robot description format** defining links (rigid bodies), joints (connections), and properties (visual, collision, inertial)
+- **Links contain visual geometry for rendering**, collision geometry for physics, and inertial properties (mass, inertia tensor) for simulation
+- **Joints connect links in a tree structure** with six types: revolute (limited rotation), continuous (unlimited rotation), prismatic (linear), fixed, planar, floating
+- **Humanoid robots follow naming conventions** (base_link, left_upper_arm, right_thigh) from REP-120 for consistency
+- **Kinematic chains define motion hierarchies** with joints enabling degrees of freedom (DOF) for humanoid movement
+- **check_urdf validates URDF syntax and structure** catching errors like loops, missing links, and invalid inertia tensors
+- **RViz2 + robot_state_publisher visualize URDF models** with joint_state_publisher_gui providing interactive control
+- **Xacro extends URDF with macros and parameters** enabling reusable templates for symmetric structures (left/right arms)
+
+</div>
+
+## What's Next?
+
+In **Chapter 5: Launch Files and Package Management**, you'll learn to:
+- Create Python launch files for multi-node systems
+- Structure ROS 2 packages with proper dependencies
+- Pass parameters and configure nodes via launch files
+- Build packages with colcon and distribute them
+
+**Prerequisite Check**: Before proceeding, ensure you can:
+- ✅ Create a URDF file with links, joints, and visual geometry
+- ✅ Explain the difference between visual and collision geometry
+- ✅ Calculate inertia tensors for primitive shapes (box, cylinder, sphere)
+- ✅ Validate URDF with check_urdf and visualize in RViz2
+
+---
+
+**Next**: Chapter 5: Launch Files and Package Management (coming soon)
