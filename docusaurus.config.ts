@@ -37,16 +37,16 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          path: '../docs', // Changed to load docs from the root docs/ directory
+          //  Changed to load docs from the root docs/ directory
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          routeBasePath: '/docs',
+          routeBasePath: 'docs',
           editUrl:
             'https://github.com/Alishba-Moin/ai-native-textbook/tree/main/docs/',
         },
         blog: false, // Disable blog for textbook
         theme: {
-          customCss: './css/custom.css',
+          customCss: './src/css/custom.css',
         },
         sitemap: {
           changefreq: 'weekly',
