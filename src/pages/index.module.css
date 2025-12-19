@@ -1,150 +1,315 @@
-/* 
-/* Hero Banner Styling */
+/* src/pages/index.module.css - 2025 Professional Robotics Theme with Orange & Navy */
+
 .heroBanner {
-  padding: 8rem 0;
-  text-align: center;
-  background-color: #0a0a0a; /* Dark background */
-  /* Grid pattern background */
-  background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 50px 50px;
+  padding: 140px 0 180px;
+  background: linear-gradient(135deg, #0a0e17 0%, #1a2332 100%);
+  color: white;
   position: relative;
   overflow: hidden;
 }
 
-/* Subtle glowing background blobs */
-.heroBanner::before, .heroBanner::after {
-  content: '';
-  position: absolute;
-  width: 300px;
-  height: 300px;
-  border-radius: 50%;
-  z-index: 0;
-  filter: blur(100px);
-  opacity: 0.4;
-}
-
-.heroBanner::before {
-  background: radial-gradient(circle, #ff6b6b, #ffa500);
-  top: -100px;
-  left: -100px;
-}
-
-.heroBanner::after {
-  background: radial-gradient(circle, #6b6bff, #8a2be2);
-  bottom: -100px;
-  right: -100px;
+.heroGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 60px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
 }
 
 .heroContent {
-  position: relative;
-  z-index: 1;
-  max-width: 800px;
-  margin: 0 auto;
+  max-width: 600px;
 }
 
-/* Main Title */
 .heroTitle {
-  font-size: 4.5rem;
-  font-weight: 800;
-  line-height: 1.2;
+  font-size: 4.8rem;
+  font-weight: 900;
+  line-height: 1.05;
   margin-bottom: 24px;
-  color: #ffffff;
 }
 
-/* Glowing Gradient Text */
-.gradientText {
-  /* Orange to Blue to Purple gradient */
-  background: linear-gradient(90deg, #ff8a00, #e52e71, #00c6ff, #8a2be2);
+.accent {
+  background: linear-gradient(90deg, #ff6b35, #f7931e);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Subtitle */
 .heroSubtitle {
-  font-size: 1.25rem;
-  color: #a0a0a0;
-  margin-bottom: 40px;
-  line-height: 1.6;
+  font-size: 1.6rem;
+  opacity: 0.92;
+  line-height: 1.7;
+  margin-bottom: 48px;
 }
 
-/* Button */
-.buttons {
+.heroActions {
   display: flex;
-  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
 }
 
-/* Primary button style override */
-:global(.button--primary) {
-  background-color: #ff8a00; /* Orange button */
-  border-color: #ff8a00;
-  color: #000;
-  font-weight: bold;
-  padding: 1rem 2.5rem;
+.primaryBtn {
+  background: linear-gradient(135deg, #ff6b35, #f7931e);
+  color: white;
+  padding: 18px 36px;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
   transition: all 0.3s ease;
 }
 
-:global(.button--primary:hover) {
-  background-color: #e67e00;
-  border-color: #e67e00;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(255, 138, 0, 0.4);
+.primaryBtn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(255, 107, 53, 0.4);
 }
 
-/* Curriculum Section & Cards (Ye purana style hi hai, thoda adjust kiya hai) */
+.secondaryBtn {
+  background: transparent;
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  padding: 16px 36px;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.secondaryBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: white;
+}
+
+/* Robot Visual */
+.heroVisual {
+  position: relative;
+  height: 500px;
+}
+
+.robotContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 400px;
+  animation: float 8s ease-in-out infinite;
+}
+
+.robotBody {
+  width: 180px;
+  height: 250px;
+  background: linear-gradient(180deg, #334155, #1e293b);
+  border-radius: 40px 40px 20px 20px;
+  position: absolute;
+  bottom: 0;
+  left: 60px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.robotHead {
+  width: 120px;
+  height: 140px;
+  background: #1e293b;
+  border-radius: 60px 60px 40px 40px;
+  position: absolute;
+  top: 0;
+  left: 90px;
+  box-shadow: inset 0 10px 20px rgba(255, 107, 53, 0.2);
+}
+
+.robotArmLeft, .robotArmRight {
+  width: 40px;
+  height: 180px;
+  background: #334155;
+  border-radius: 20px;
+  position: absolute;
+  top: 120px;
+}
+
+.robotArmLeft {
+  left: 30px;
+  transform: rotate(-20deg);
+}
+
+.robotArmRight {
+  right: 30px;
+  transform: rotate(20deg);
+}
+
+.glowOrb {
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle, #ff6b35, #f7931e);
+  border-radius: 50%;
+  position: absolute;
+  top: 70px;
+  left: 120px;
+  box-shadow: 0 0 60px #ff6b35;
+  animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+  50% { transform: translate(-50%, -50%) translateY(-20px); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+/* Wave Divider */
+.waveDivider {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 140px;
+}
+
+.waveDivider svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Curriculum Section */
 .curriculumSection {
-  padding: 4rem 0;
-  background-color: #121212; /* Slightly lighter dark */
+  padding: 100px 0;
+  background: #f8fafc;
 }
 
 .sectionTitle {
+  font-size: 3.2rem;
   text-align: center;
-  margin-bottom: 3rem;
-  font-size: 2.5rem;
-  color: #fff;
+  margin-bottom: 70px;
+  color: #0f172a;
+  font-weight: 800;
 }
 
 .moduleGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-  padding: 0 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 40px;
+  max-width: 1300px;
+  margin: 0 auto;
 }
 
 .moduleCard {
-  display: block;
-  padding: 2rem;
-  border-radius: 12px;
-  background: #1a1a1a;
-  border: 1px solid #333;
-  transition: all 0.3s ease;
-  text-decoration: none !important;
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
 }
 
-.moduleCard:hover {
-  transform: translateY(-5px);
-  border-color: #ff8a00;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+.weekTag {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: linear-gradient(135deg, #ff6b35, #f7931e);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .moduleCard h3 {
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
-  color: #fff;
+  font-size: 1.8rem;
+  margin: 40px 0 16px;
+  color: #0f172a;
 }
 
 .moduleCard p {
-  color: #a0a0a0;
-  margin-bottom: 0;
+  color: #64748b;
+  line-height: 1.7;
+  font-size: 1.1rem;
 }
 
-/* Responsive adjustments */
-@media screen and (max-width: 768px) {
-  .heroTitle {
-    font-size: 3rem;
+.moduleCard:hover {
+  transform: translateY(-15px);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* Features Section */
+.featuresSection {
+  padding: 120px 0;
+  background: white;
+}
+
+.featureGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 50px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.featureCard {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.featureIcon {
+  font-size: 4rem;
+  margin-bottom: 24px;
+  display: block;
+}
+
+.featureCard h3 {
+  font-size: 1.6rem;
+  margin-bottom: 16px;
+  color: #0f172a;
+}
+
+.featureCard p {
+  color: #64748b;
+  line-height: 1.7;
+  font-size: 1.1rem;
+}
+
+/* Final CTA */
+.ctaSection {
+  padding: 120px 0;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: white;
+  text-align: center;
+}
+
+.ctaSection h2 {
+  font-size: 3.5rem;
+  margin-bottom: 24px;
+}
+
+.ctaSection p {
+  font-size: 1.4rem;
+  opacity: 0.9;
+  margin-bottom: 48px;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .heroGrid {
+    grid-template-columns: 1fr;
+    text-align: center;
   }
-  .heroSubtitle {
-    font-size: 1.1rem;
+  .heroVisual {
+    order: -1;
+    margin-bottom: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroTitle {
+    font-size: 3.5rem;
+  }
+  .sectionTitle {
+    font-size: 2.5rem;
   }
 }

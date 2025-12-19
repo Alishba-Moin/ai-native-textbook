@@ -1,127 +1,121 @@
-import type {ReactNode} from 'react';
-import clsx from 'clsx';
+import React from 'react';
+import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import Layout from '@theme/Layout';
-// import HomepageFeatures from '@site/src/components/HomepageFeatures';
-// import Heading from '@theme/Heading';
+import styles from './index.module.css';
 
-// import styles from './index.module.css';
-
-// function HomepageHeader() {
-//   const {siteConfig} = useDocusaurusContext();
-//   return (
-//     <header className={clsx('hero hero--primary', styles.heroBanner)}>
-//       <div className="container">
-//         <Heading as="h1" className="hero__title">
-//           {siteConfig.title}
-//         </Heading>
-//         <p className="hero__subtitle">{siteConfig.tagline}</p>
-//         <div className={styles.buttons}>
-//           <Link
-//             className="button button--secondary button--lg"
-//             to="/docs/intro">
-//             Docusaurus Tutorial - 5min ⏱️
-//           </Link>
-//         </div>
-//       </div>
-//     </header>
-//   );
-// }
-
-// export default function Home(): ReactNode {
-//   const {siteConfig} = useDocusaurusContext();
-//   return (
-//     <Layout
-//       title={`Hello from ${siteConfig.title}`}
-//       description="Description will go into a meta tag in <head />">
-//       <HomepageHeader />
-//       <main>
-//         <HomepageFeatures />
-//       </main>
-//     </Layout>
-//   );
-// }
 function HomepageHeader() {
   const {siteConfig} = useDocusaurusContext();
   return (
-    <header className={clsx('hero', styles.heroBanner)}>
+    <header className={styles.heroBanner}>
       <div className="container">
-        <div className={styles.heroContent}>
-          <h1 className={styles.heroTitle}>
-            The Premier <br />
-            <span className={styles.gradientText}>Physical AI & Humanoid</span> <br />
-            Hackathon Book
-          </h1>
-          <p className={styles.heroSubtitle}>
-            Master the future of robotics. Dive into ROS 2, Digital Twins, NVIDIA Isaac, and Vision-Language-Action models to build the next generation of intelligent humanoid robots.
-          </p>
-          <div className={styles.buttons}>
-            <Link
-              className="button button--primary button--lg"
-              to="/docs/category/module-1-ros-2-nervous-system">
-              Explore the Textbook
-            </Link>
+        <div className={styles.heroGrid}>
+          <div className={styles.heroContent}>
+            <h1 className={styles.heroTitle}>
+              Physical AI & <span className={styles.accent}>Humanoid</span> Robotics
+            </h1>
+            <p className={styles.heroSubtitle}>
+              Mastering Embodied Intelligence: From Theory to Humanoid Deployment
+            </p>
+            <div className={styles.heroActions}>
+              <Link className={styles.primaryBtn} to="/docs/module-1-ros2">
+                Explore the Textbook →
+              </Link>
+              <Link className={styles.secondaryBtn} to="/docs/introduction-to-robotics">
+                Quick Start
+              </Link>
+            </div>
+          </div>
+          <div className={styles.heroVisual}>
+            <div className={styles.robotContainer}>
+              <div className={styles.robotBody}></div>
+              <div className={styles.robotHead}></div>
+              <div className={styles.robotArmLeft}></div>
+              <div className={styles.robotArmRight}></div>
+              <div className={styles.glowOrb}></div>
+            </div>
           </div>
         </div>
+      </div>
+      <div className={styles.waveDivider}>
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path d="M0,0 C320,80 480,120 720,80 C960,40 1120,80 1440,60 L1440,120 L0,120 Z" fill="#f8fafc" />
+        </svg>
       </div>
     </header>
   );
 }
 
-// Module Card Component (Neeche wale cards)
-const ModuleCard = ({title, description, link}) => {
+const ModuleCard = ({title, description, link, week}) => {
   return (
-    <Link to={link} className={clsx('card', styles.moduleCard)}>
+    <Link to={link} className={styles.moduleCard}>
+      <div className={styles.weekTag}>{week}</div>
       <h3>{title}</h3>
       <p>{description}</p>
+      <div className={styles.cardHover}>
+        <span>Explore →</span>
+      </div>
     </Link>
   );
 };
 
-// Main Page Component
 export default function Home() {
   const {siteConfig} = useDocusaurusContext();
 
   const modules = [
-    {
-      title: 'Module 1: ROS 2 Nervous System',
-      description: 'Understand the core communication paradigms of ROS 2.',
-      link: '/docs/category/module-1-ros-2-nervous-system',
-    },
-    {
-      title: 'Module 2: The Digital Twin',
-      description: 'Dive into robot simulation with Gazebo and Unity.',
-      link: '/docs/module-2-digital-twin/physics-in-gazebo',
-    },
-    {
-      title: 'Module 3: The AI-Robot Brain',
-      description: 'Explore NVIDIA Isaac for AI-powered robotics.',
-      link: '/docs/module-3-isaac/isaac-sim-intro',
-    },
-    {
-      title: 'Module 4: Vision-Language-Action (VLA)',
-      description: 'Integrate advanced AI for human-robot collaboration.',
-      link: '/docs/module-4-vla/voice-to-action',
-    },
+    { title: 'ROS 2 Nervous System', description: 'Core communication & robot control middleware', link: '/docs/module-1-ros2', week: 'Weeks 1–4' },
+    { title: 'The Digital Twin', description: 'Simulation mastery with Gazebo & Unity', link: '/docs/module-2-digital-twin', week: 'Weeks 5–7' },
+    { title: 'The AI-Robot Brain', description: 'NVIDIA Isaac for perception & manipulation', link: '/docs/module-3-isaac', week: 'Weeks 8–10' },
+    { title: 'Vision-Language-Action (VLA)', description: 'Natural language to robot behavior', link: '/docs/module-4-vla-humanoids', week: 'Weeks 11–13' },
   ];
 
   return (
-    <Layout
-      title={siteConfig.title}
-      description="The definitive guide to Physical AI and Humanoid Robotics.">
+    <Layout title={siteConfig.title} description={siteConfig.tagline}>
       <HomepageHeader />
       <main>
-        <div className={styles.curriculumSection}>
+        <section className={styles.curriculumSection}>
           <div className="container">
-            <h2 className={styles.sectionTitle}>Our Curriculum</h2>
+            <h2 className={styles.sectionTitle}>Curriculum Journey</h2>
             <div className={styles.moduleGrid}>
-              {modules.map((props, idx) => (
-                <ModuleCard key={idx} {...props} />
+              {modules.map((mod, idx) => (
+                <ModuleCard key={idx} {...mod} />
               ))}
             </div>
           </div>
-        </div>
+        </section>
+
+        <section className={styles.featuresSection}>
+          <div className="container">
+            <h2 className={styles.sectionTitle}>Why This Textbook?</h2>
+            <div className={styles.featureGrid}>
+              <div className={styles.featureCard}>
+                <span className={styles.featureIcon}>🤖</span>
+                <h3>AI-Native Design</h3>
+                <p>Built with 2025 AI tools for real-world humanoid applications</p>
+              </div>
+              <div className={styles.featureCard}>
+                <span className={styles.featureIcon}>⚡</span>
+                <h3>Hands-On Projects</h3>
+                <p>Executable code, simulations, and capstone challenges</p>
+              </div>
+              <div className={styles.featureCard}>
+                <span className={styles.featureIcon}>🌐</span>
+                <h3>Future-Proof Skills</h3>
+                <p>VLA, digital twins, and embodied intelligence mastery</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className={styles.ctaSection}>
+          <div className="container text-center">
+            <h2>Begin Your Robotics Journey</h2>
+            <p>The future of physical AI starts here</p>
+            <Link className={styles.primaryBtn} to="/docs/module-1-ros2">
+              Get Started →
+            </Link>
+          </div>
+        </section>
       </main>
     </Layout>
   );
