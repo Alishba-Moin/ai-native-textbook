@@ -31,7 +31,6 @@ By the end of this chapter, you'll build a URDF model of a simplified humanoid r
 
 ## 4.1 What is URDF?
 
-<ConceptCallout type="definition" title="URDF: Unified Robot Description Format">
 
 **URDF** is an XML-based specification for robot models:
 - **Links**: Rigid bodies (base, limbs, sensors)
@@ -46,7 +45,6 @@ URDF files are used by:
 - **MoveIt2**: Motion planning framework
 - **robot_state_publisher**: Publishes TF transforms based on joint states
 
-</ConceptCallout>
 
 ### 4.1.1 URDF File Structure
 
@@ -190,8 +188,6 @@ Common errors:
 - **Invalid inertia**: Non-positive-definite inertia tensor
 
 ### 4.6.2 Visualizing in RViz2
-
-
 
 If your robot doesn't appear in RViz2:
 1. **Check Fixed Frame**: Set to "base_link" in Global Options
