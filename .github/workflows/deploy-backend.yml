@@ -1,0 +1,48 @@
+name: Deploy FastAPI Backend to Render
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Poetry
+        run: |
+          pip install poetry
+          poetry config virtualenvs.create false
+
+      - name: Install backend dependencies
+        run: poetry install --no-root
+        working-directory: './backend'
+
+      - name: Build Docker image and push to Render (placeholder)
+        run: |
+          echo "Simulating Docker build and push to Render..."
+          echo "Render deployment would typically be triggered by webhook or direct integration."
+          echo "Ensure Render is configured to auto-deploy from your GitHub repository."
+        # In a real scenario, this step would involve:
+        # - Logging into a container registry (e.g., Docker Hub, GitHub Container Registry)
+        # - Building the Docker image (e.g., `docker build -t your-repo/backend:latest .`)
+        # - Pushing the Docker image (e.g., `docker push your-repo/backend:latest`)
+        # Render typically pulls directly from GitHub and builds, so explicit Docker push might not be needed.
+        # If using Render's native Docker deployment, the Render Blueprint will handle the build.
+
+      - name: Notify Render (Optional - if not using auto-deploy)
+        # This step is often not needed if Render is configured for auto-deploy from GitHub.
+        # If manual triggering is required, you might use a curl command to a Render API endpoint.
+        run: echo "Render notification placeholder."

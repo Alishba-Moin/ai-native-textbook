@@ -1,0 +1,316 @@
+/* =====================================================
+   Chatbot.module.css – 2025 Professional UI
+   Orange + Deep Navy Theme + Mini Robot Icon
+===================================================== */
+
+/* ================= FLOATING BUTTON ================= */
+
+.floatingBtn {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  width: 68px;
+  height: 68px;
+  background: linear-gradient(135deg, #ff6b35, #f7931e);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px rgba(255, 107, 53, 0.35);
+  z-index: 1000;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.floatingBtn:hover {
+  transform: scale(1.15) rotate(6deg);
+  box-shadow: 0 14px 40px rgba(255, 107, 53, 0.55);
+}
+
+.floatingBtn:active {
+  transform: scale(1.05);
+}
+
+/* ================= MINI ROBOT ICON ================= */
+
+.miniRobot {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  animation: floatMini 4s ease-in-out infinite;
+}
+
+.miniRobot .robotHead {
+  width: 24px;
+  height: 26px;
+  background: #1e293b;
+  border-radius: 14px 14px 10px 10px;
+  position: absolute;
+  top: 0;
+  left: 9px;
+  box-shadow: inset 0 3px 6px rgba(255, 107, 53, 0.25);
+}
+
+.miniRobot .robotBody {
+  width: 32px;
+  height: 28px;
+  background: linear-gradient(180deg, #334155, #1e293b);
+  border-radius: 12px;
+  position: absolute;
+  bottom: 0;
+  left: 5px;
+}
+
+.miniRobot .robotArmLeft,
+.miniRobot .robotArmRight {
+  width: 6px;
+  height: 20px;
+  background: #334155;
+  border-radius: 4px;
+  position: absolute;
+  top: 18px;
+}
+
+.miniRobot .robotArmLeft {
+  left: -2px;
+  transform: rotate(-20deg);
+}
+
+.miniRobot .robotArmRight {
+  right: -2px;
+  transform: rotate(20deg);
+}
+
+.miniRobot .glowOrb {
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(circle, #ff6b35, #f7931e);
+  border-radius: 50%;
+  position: absolute;
+  top: 12px;
+  left: 16px;
+  box-shadow: 0 0 14px #ff6b35;
+  animation: pulseOrb 2s infinite;
+}
+
+/* ================= CHAT WINDOW ================= */
+
+.chatWindow {
+  position: fixed;
+  bottom: 120px;
+  right: 40px;
+  width: 420px;
+  height: 450px;
+  background: linear-gradient(135deg, #0a0e17, #1a2332);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  border: 1px solid rgba(255, 107, 53, 0.1);
+  overflow: hidden;
+  animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+}
+
+/* ================= HEADER ================= */
+
+.chatHeader {
+  background: linear-gradient(135deg, #ff6b35, #f7931e);
+  color: white;
+  padding: 16px 24px;
+  border-radius: 24px 24px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  transition: transform 0.25s;
+}
+
+.closeBtn:hover {
+  transform: rotate(90deg);
+}
+
+/* ================= MESSAGES ================= */
+
+.messages {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
+}
+
+.userMsg {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.userMsg .msgBubble {
+  background: linear-gradient(135deg, #ff6b35, #f7931e);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 20px 20px 4px 20px;
+  max-width: 80%;
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+  animation: slideInRight 0.3s ease-out;
+}
+
+.botMsg {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 16px;
+}
+
+.botMsg .msgBubble {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+  padding: 12px 20px;
+  border-radius: 20px 20px 20px 4px;
+  max-width: 80%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  animation: slideInLeft 0.3s ease-out;
+}
+
+.sources {
+  font-size: 0.8rem;
+  color: #cbd5e1;
+  margin-top: 8px;
+  opacity: 0.8;
+}
+
+.loading {
+  text-align: center;
+  color: #ff6b35;
+  font-style: italic;
+  animation: pulseText 1.5s infinite;
+}
+
+.welcome {
+  text-align: center;
+  color: #64748b;
+  font-style: italic;
+  opacity: 0.7;
+}
+
+/* ================= INPUT ================= */
+
+.inputForm {
+  display: flex;
+  padding: 16px 24px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(255, 107, 53, 0.1);
+}
+
+.input {
+  flex: 1;
+  padding: 12px 20px;
+  border: 1px solid rgba(255, 107, 53, 0.2);
+  border-radius: 50px;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.input:focus {
+  border-color: #ff6b35;
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2);
+}
+
+.sendBtn {
+  margin-left: 12px;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #ff6b35, #f7931e);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 22px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.sendBtn:hover {
+  transform: rotate(20deg) scale(1.1);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+}
+
+/* ================= HINT ================= */
+
+.selectedHint {
+  font-size: 0.8rem;
+  color: #ffab71;
+  text-align: center;
+  padding: 8px;
+  background: rgba(255, 107, 53, 0.1);
+  border-radius: 8px;
+  margin: 8px 24px;
+  animation: fadeIn 0.3s;
+}
+
+/* ================= ANIMATIONS ================= */
+
+@keyframes slideInRight {
+  from { transform: translateX(50px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-50px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes popIn {
+  from {
+    transform: translateY(20px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes floatMini {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes pulseOrb {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+@keyframes pulseText {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+  .chatWindow {
+    width: 100%;
+    right: 0;
+    bottom: 0;
+    border-radius: 24px 24px 0 0;
+  }
+}

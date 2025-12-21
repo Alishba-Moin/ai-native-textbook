@@ -1,96 +1,167 @@
+# import os
+# import yaml
+# import re
+
+# # Directory containing the original chapter specifications
+# CHAPTER_SPECS_DIR = "specs/1-ai-native-textbook/"
+# # Directory where Docusaurus loads its documentation files
+# DOCS_DIR = "docs/"
+
+# def slugify(text):
+#     text = re.sub(r'[\s_]+', '-', text).lower()
+#     text = re.sub(r'[^a-z0-9-]', '', text)
+#     return text
+
+# def ingest_chapter_spec(chapter_file_path: str):
+#     print(f"Processing chapter spec: {chapter_file_path}")
+
+#     with open(chapter_file_path, 'r', encoding='utf-8') as f:
+#         content_lines = f.readlines()
+
+#     frontmatter_str = ""
+#     body_content_lines = []
+#     in_frontmatter = False
+#     frontmatter_delimiter_count = 0
+
+#     for line in content_lines:
+#         if line.strip() == "---":
+#             frontmatter_delimiter_count += 1
+#             if frontmatter_delimiter_count == 1:
+#                 in_frontmatter = True
+#             elif frontmatter_delimiter_count == 2:
+#                 in_frontmatter = False
+#                 continue # Skip the closing '---'
+
+#         if in_frontmatter and frontmatter_delimiter_count == 1:
+#             frontmatter_str += line
+#         elif frontmatter_delimiter_count == 2 or not in_frontmatter:
+#             body_content_lines.append(line)
+
+#     frontmatter = yaml.safe_load(frontmatter_str) if frontmatter_str else {}
+#     body_content = "".join(body_content_lines).strip()
+
+#     # Validate required fields as per chapter-metadata.json
+#     required_fields = ["id", "title", "week_number", "module_id", "original_language"]
+#     for field in required_fields:
+#         if field not in frontmatter:
+#             print(f"Error: Missing required frontmatter field '{field}' in {chapter_file_path}")
+#             return
+
+#     # Generate slug if not provided
+#     if "slug" not in frontmatter or not frontmatter["slug"]:
+#         frontmatter["slug"] = slugify(frontmatter["title"])
+
+#     # Ensure Docusaurus-specific frontmatter is correct
+#     docusaurus_frontmatter = {
+#         "id": frontmatter["id"],
+#         "title": frontmatter["title"],
+#         "sidebar_label": frontmatter["title"],
+#         "slug": frontmatter["slug"],
+#         "week_number": frontmatter["week_number"],
+#         "module_id": frontmatter["module_id"],
+#         "original_language": frontmatter["original_language"],
+#         **{k: v for k, v in frontmatter.items() if k not in required_fields and k != "slug"} # Include other fields
+#     }
+
+#     # Construct the MDX content
+#     mdx_content = f"---\n{yaml.dump(docusaurus_frontmatter, sort_keys=False)}---\n\n{body_content}"
+
+#     # Define output path
+#     output_filename = f"{frontmatter["slug"]}.mdx"
+#     output_file_path = os.path.join(DOCS_DIR, output_filename)
+
+#     os.makedirs(DOCS_DIR, exist_ok=True)
+#     with open(output_file_path, 'w', encoding='utf-8') as f:
+#         f.write(mdx_content)
+#     print(f"Successfully ingested {chapter_file_path} to {output_file_path}")
+
+# def main():
+#     print("Starting content ingestion process...")
+#     os.makedirs(DOCS_DIR, exist_ok=True)
+
+#     # Create a dummy chapter spec for testing if it doesn't exist
+#     dummy_chapter_dir = os.path.join(CHAPTER_SPECS_DIR, "chapter_specs")
+#     os.makedirs(dummy_chapter_dir, exist_ok=True)
+#     dummy_chapter_path = os.path.join(dummy_chapter_dir, "intro_to_robotics.md")
+#     if not os.path.exists(dummy_chapter_path):
+#         with open(dummy_chapter_path, 'w', encoding='utf-8') as f:
+#             f.write("---\nid: 123e4567-e89b-12d3-a456-426614174000\ntitle: Introduction to Robotics\nweek_number: 1\nmodule_id: 123e4567-e89b-12d3-a456-426614174001\noriginal_language: en\n---\n\n# Introduction to Robotics\n\nThis is a dummy chapter for testing content ingestion.\n")
+
+#     for file in os.listdir(dummy_chapter_dir):
+#         if file.endswith(".md") or file.endswith(".mdx"):
+#             ingest_chapter_spec(os.path.join(dummy_chapter_dir, file))
+#     print("Content ingestion process completed.")
+
+# if __name__ == "__main__":
+#     main()
+
 import os
 import yaml
 import re
+from qdrant_client import QdrantClient
+from qdrant_client.http.models import Distance, VectorParams, PointStruct
+import google.generativeai as genai
 
-# Directory containing the original chapter specifications
-CHAPTER_SPECS_DIR = "specs/1-ai-native-textbook/"
-# Directory where Docusaurus loads its documentation files
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+
+# Directory with MDX files
 DOCS_DIR = "docs/"
+COLLECTION_NAME = "book_content"
 
-def slugify(text):
-    text = re.sub(r'[\s_]+', '-', text).lower()
-    text = re.sub(r'[^a-z0-9-]', '', text)
-    return text
+qdrant_client = QdrantClient(
+    url=os.getenv("QDRANT_CLOUD_URL"),
+    api_key=os.getenv("QDRANT_API_KEY")
+)
 
-def ingest_chapter_spec(chapter_file_path: str):
-    print(f"Processing chapter spec: {chapter_file_path}")
+# Create collection if not exists
+if not qdrant_client.collection_exists(COLLECTION_NAME):
+    qdrant_client.create_collection(
+        collection_name=COLLECTION_NAME,
+        vectors_config=VectorParams(size=768, distance=Distance.COSINE),
+    )
 
-    with open(chapter_file_path, 'r', encoding='utf-8') as f:
-        content_lines = f.readlines()
+def extract_text_from_mdx(file_path: str):
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    # Remove frontmatter
+    content = re.sub(r'^---.*?---', '', content, flags=re.S)
+    # Remove code blocks if needed (optional)
+    content = re.sub(r'```.*?```', '', content, flags=re.S)
+    return content.strip()
 
-    frontmatter_str = ""
-    body_content_lines = []
-    in_frontmatter = False
-    frontmatter_delimiter_count = 0
+def chunk_text(text: str, chunk_size=500):
+    words = text.split()
+    chunks = []
+    for i in range(0, len(words), chunk_size):
+        chunks.append(" ".join(words[i:i+chunk_size]))
+    return chunks
 
-    for line in content_lines:
-        if line.strip() == "---":
-            frontmatter_delimiter_count += 1
-            if frontmatter_delimiter_count == 1:
-                in_frontmatter = True
-            elif frontmatter_delimiter_count == 2:
-                in_frontmatter = False
-                continue # Skip the closing '---'
-
-        if in_frontmatter and frontmatter_delimiter_count == 1:
-            frontmatter_str += line
-        elif frontmatter_delimiter_count == 2 or not in_frontmatter:
-            body_content_lines.append(line)
-
-    frontmatter = yaml.safe_load(frontmatter_str) if frontmatter_str else {}
-    body_content = "".join(body_content_lines).strip()
-
-    # Validate required fields as per chapter-metadata.json
-    required_fields = ["id", "title", "week_number", "module_id", "original_language"]
-    for field in required_fields:
-        if field not in frontmatter:
-            print(f"Error: Missing required frontmatter field '{field}' in {chapter_file_path}")
-            return
-
-    # Generate slug if not provided
-    if "slug" not in frontmatter or not frontmatter["slug"]:
-        frontmatter["slug"] = slugify(frontmatter["title"])
-
-    # Ensure Docusaurus-specific frontmatter is correct
-    docusaurus_frontmatter = {
-        "id": frontmatter["id"],
-        "title": frontmatter["title"],
-        "sidebar_label": frontmatter["title"],
-        "slug": frontmatter["slug"],
-        "week_number": frontmatter["week_number"],
-        "module_id": frontmatter["module_id"],
-        "original_language": frontmatter["original_language"],
-        **{k: v for k, v in frontmatter.items() if k not in required_fields and k != "slug"} # Include other fields
-    }
-
-    # Construct the MDX content
-    mdx_content = f"---\n{yaml.dump(docusaurus_frontmatter, sort_keys=False)}---\n\n{body_content}"
-
-    # Define output path
-    output_filename = f"{frontmatter["slug"]}.mdx"
-    output_file_path = os.path.join(DOCS_DIR, output_filename)
-
-    os.makedirs(DOCS_DIR, exist_ok=True)
-    with open(output_file_path, 'w', encoding='utf-8') as f:
-        f.write(mdx_content)
-    print(f"Successfully ingested {chapter_file_path} to {output_file_path}")
-
-def main():
-    print("Starting content ingestion process...")
-    os.makedirs(DOCS_DIR, exist_ok=True)
-
-    # Create a dummy chapter spec for testing if it doesn't exist
-    dummy_chapter_dir = os.path.join(CHAPTER_SPECS_DIR, "chapter_specs")
-    os.makedirs(dummy_chapter_dir, exist_ok=True)
-    dummy_chapter_path = os.path.join(dummy_chapter_dir, "intro_to_robotics.md")
-    if not os.path.exists(dummy_chapter_path):
-        with open(dummy_chapter_path, 'w', encoding='utf-8') as f:
-            f.write("---\nid: 123e4567-e89b-12d3-a456-426614174000\ntitle: Introduction to Robotics\nweek_number: 1\nmodule_id: 123e4567-e89b-12d3-a456-426614174001\noriginal_language: en\n---\n\n# Introduction to Robotics\n\nThis is a dummy chapter for testing content ingestion.\n")
-
-    for file in os.listdir(dummy_chapter_dir):
-        if file.endswith(".md") or file.endswith(".mdx"):
-            ingest_chapter_spec(os.path.join(dummy_chapter_dir, file))
-    print("Content ingestion process completed.")
+def ingest_all_chapters():
+    points = []
+    chapter_id = 0
+    for root, dirs, files in os.walk(DOCS_DIR):
+        for file in files:
+            if file.endswith(".mdx"):
+                file_path = os.path.join(root, file)
+                text = extract_text_from_mdx(file_path)
+                chunks = chunk_text(text)
+                for idx, chunk in enumerate(chunks):
+                    embedding = genai.embed_content(
+                        model="models/text-embedding-004",
+                        content=chunk
+                    )['embedding']
+                    points.append(PointStruct(
+                        id=f"chapter_{chapter_id}_{idx}",
+                        vector=embedding,
+                        payload={
+                            "text": chunk,
+                            "file_path": file_path
+                        }
+                    ))
+                chapter_id += 1
+    if points:
+        qdrant_client.upsert(collection_name=COLLECTION_NAME, points=points)
+    print("Real book content ingested successfully!")
 
 if __name__ == "__main__":
-    main()
+    ingest_all_chapters()

@@ -31,6 +31,12 @@ const config: Config = {
     locales: ['en'],
   },
 
+  customFields: {
+    backendUrl: 'http://localhost:8000',  // Local testing ke liye
+    // Jab backend Render pe deploy ho jaye, tab yeh change kar dena:
+    // backendUrl: 'https://your-backend-name.onrender.com',
+  },
+  
   presets: [
     [
       'classic',
@@ -93,10 +99,6 @@ const config: Config = {
               {
                 label: 'Introduction',
                 to: '/docs/introduction-to-robotics',
-              },
-              {
-                label: 'Setup Guides',
-                to: '/docs/setup/workstation',
               },
             ],
           },

@@ -1,3 +1,46 @@
+// import React from 'react';
+// import { useDoc } from '@docusaurus/theme-common/internal';
+// import MDXContent from '@theme/MDXContent';
+
+// interface ChapterMetadata {
+//   id: string;
+//   title: string;
+//   week_number: number;
+//   module_id: string;
+//   original_language: string;
+//   slug: string;
+//   [key: string]: any; // Allow other custom fields
+// }
+
+// interface ChapterLayoutProps {
+//   children: React.ReactNode;
+// }
+
+// function ChapterLayout({ children }: ChapterLayoutProps): JSX.Element {
+//   const { metadata } = useDoc();
+//   const { frontMatter } = metadata;
+
+//   const chapterMetadata: ChapterMetadata = frontMatter as ChapterMetadata;
+
+//   return (
+//     <div className="chapter-layout">
+//       <h1>{chapterMetadata.title}</h1>
+//       {chapterMetadata.week_number && (
+//         <p>Week: {chapterMetadata.week_number}</p>
+//       )}
+//       {chapterMetadata.module_id && (
+//         <p>Module ID: {chapterMetadata.module_id}</p>
+//       )}
+//       {chapterMetadata.original_language && (
+//         <p>Language: {chapterMetadata.original_language}</p>
+//       )}
+//       <MDXContent>{children}</MDXContent>
+//     </div>
+//   );
+// }
+
+// export default ChapterLayout;
+
 import React from 'react';
 import { useDoc } from '@docusaurus/theme-common/internal';
 import MDXContent from '@theme/MDXContent';
@@ -9,7 +52,7 @@ interface ChapterMetadata {
   module_id: string;
   original_language: string;
   slug: string;
-  [key: string]: any; // Allow other custom fields
+  [key: string]: any;
 }
 
 interface ChapterLayoutProps {
@@ -19,21 +62,22 @@ interface ChapterLayoutProps {
 function ChapterLayout({ children }: ChapterLayoutProps): JSX.Element {
   const { metadata } = useDoc();
   const { frontMatter } = metadata;
-
   const chapterMetadata: ChapterMetadata = frontMatter as ChapterMetadata;
 
   return (
-    <div className="chapter-layout">
-      <h1>{chapterMetadata.title}</h1>
-      {chapterMetadata.week_number && (
-        <p>Week: {chapterMetadata.week_number}</p>
-      )}
-      {chapterMetadata.module_id && (
-        <p>Module ID: {chapterMetadata.module_id}</p>
-      )}
-      {chapterMetadata.original_language && (
-        <p>Language: {chapterMetadata.original_language}</p>
-      )}
+    <div className="chapter-layout container margin-vert--lg">
+      <h1 className="text-4xl font-bold mb-4 text-primary">{chapterMetadata.title}</h1>
+      <div className="chapter-meta flex gap-4 mb-8 text-gray-600">
+        {chapterMetadata.week_number && (
+          <span>Week: {chapterMetadata.week_number}</span>
+        )}
+        {chapterMetadata.module_id && (
+          <span>Module ID: {chapterMetadata.module_id}</span>
+        )}
+        {chapterMetadata.original_language && (
+          <span>Language: {chapterMetadata.original_language}</span>
+        )}
+      </div>
       <MDXContent>{children}</MDXContent>
     </div>
   );
