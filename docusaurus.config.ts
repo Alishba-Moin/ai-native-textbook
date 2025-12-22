@@ -32,9 +32,7 @@ const config: Config = {
   },
 
   customFields: {
-    backendUrl: 'http://localhost:8000',  // Local testing ke liye
-    // Jab backend Render pe deploy ho jaye, tab yeh change kar dena:
-    // backendUrl: 'https://your-backend-name.onrender.com',
+    backendUrl: 'https://ai-native-textbook-production.up.railway.app/',  
   },
   
   presets: [
